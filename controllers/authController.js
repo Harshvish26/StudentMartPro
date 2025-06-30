@@ -2,6 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const generateOTP = require('../utils/otpGenerator');
+const sendEmail = require('../utils/emailSender');
 
 // Signup
 exports.signup = async (req, res) => {
@@ -15,9 +17,16 @@ exports.signup = async (req, res) => {
     if (user) return res.status(400).json({ message: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword, college, role });
+    // OTP logic
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 min expiry
+    user = new User({ name, email, password: hashedPassword, college, role, otp, otpExpiry, isVerified: false });
     await user.save();
-    res.status(201).json({ message: 'Signup successful' });
+
+    // Send OTP email
+    await sendEmail(email, 'Your College Mart OTP', `Your OTP for College Mart signup is: ${otp}`);
+
+    res.status(201).json({ message: 'Signup successful. OTP sent to your email.' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
