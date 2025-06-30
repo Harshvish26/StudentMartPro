@@ -7,7 +7,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
     "multer": "^2.0.1",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "helmet": "^x.x.x",
+    "express-rate-limit": "^x.x.x",
+    "morgan": "^x.x.x",
+    "winston": "^x.x.x"
   },
   "name": "college-barter-backend",
   "version": "1.0.0",
